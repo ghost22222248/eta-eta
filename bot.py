@@ -30,7 +30,7 @@ def start(update, context):
         #print('registering')
         
         requests.put(server + 'users/' + str(update.message.chat_id) + '.json',
-                     json={'chat_id': update.message.chat_id, 'current_balance': 1000, 'bet_size': 50,'name':update.message.chat.first_name,'phone_number':'x','chance':10})
+                     json={'chat_id': update.message.chat_id, 'current_balance': 1000, 'bet_size': 50,'name':update.message.chat.first_name,'phone_number':'x','chance':10,'username':'x',last_time':'0'})
         update.message.reply_text('You have recieved bonus of 1000 coins (10 Birr) for registering')   
         context.bot.send_message(chat_id='5010656317', text=str(update.message.chat_id)+ ' has started bot')
                      
