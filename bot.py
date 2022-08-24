@@ -28,9 +28,18 @@ def start(update, context):
     #print(r2.json())
     if (str(requests.get(server + 'users/' + str(update.message.chat_id) + '.json').json()) == 'None'):
         #print('registering')
-        
+        na=''
+        us=''
+        t = int(time.time())
+        if(update.message.chat.first_name!=None):
+          na=na+update.message.chat.first_name
+        if(update.message.chat.last_name!=None):
+          na=na+' '+update.message.chat.last_name
+          
+        if(update.message.chat.username!=None):
+          us=update.message.chat.username
         requests.put(server + 'users/' + str(update.message.chat_id) + '.json',
-                     json={'chat_id': update.message.chat_id, 'current_balance': 1000, 'bet_size': 50,'name':update.message.chat.first_name,'phone_number':'x','chance':10,'username':'x',last_time':'0'})
+                     json={'chat_id': update.message.chat_id, 'current_balance': 1000, 'bet_size': 50,'name':na,'phone_number':'x','username':us,'last_time':'0','chance':10,'time_joined':t})
         update.message.reply_text('You have recieved bonus of 1000 coins (10 Birr) for registering')   
         context.bot.send_message(chat_id='5010656317', text=str(update.message.chat_id)+ ' has started bot')
                      
@@ -85,6 +94,20 @@ def All_queries_handler(update, context):
         str(requests.get(server + 'users/' + str(query.message.chat_id) + '/current_balance.json').json()))
     bet_size = int(str(requests.get(server + 'users/' + str(query.message.chat_id) + '/bet_size.json').json()))
     chance = int(str(requests.get(server + 'users/' + str(query.message.chat_id) + '/chance.json').json()))
+    last_t = int(str(requests.get(server + 'users/' + str(query.message.chat_id) + '/last_time.json').json()))
+    t = int(str(requests.get(server + 'users/' + str(query.message.chat_id) + '/time_joined.json').json()))
+    phone = str(requests.get(server + 'users/' + str(query.message.chat_id) + '/phone_number.json').json())
+    
+    na=''
+    us=''
+    if(query.message.chat.first_name!=None):
+          na=na+query.message.chat.first_name
+    if(query.message.chat.last_name!=None):
+          na=na+' '+query.message.chat.last_name
+          
+    if(query.message.chat.username!=None):
+          us=query.message.chat.username
+    
     print("chance b "+str(chance))
     # withamt=int(str(requests.get(server + 'users/' + str(update.message.chat_id) + '/active_withdraw.json').json()))
     # phone_number=str(requests.get(server + 'users/' + str(update.message.chat_id) + '/phone_number.json').json())
@@ -138,10 +161,10 @@ def All_queries_handler(update, context):
         if (current_balance < bet_size):  # low balance
             query.edit_message_text('You don\'t have enough balance.', reply_markup=balance_low_keyboard())
         if(chance==0): #no more chance
-            query.edit_message_text('You have used all your chances today. Try again tommorrow.', reply_markup=main_menu_keyboard())
+            query.edit_message_text('You have used all your chances today. Try again tommorrow.', reply_markup=backtomain_keyboard())
         if(current_balance>bet_size and chance>0):  # enough balance
             # if (conv(query.data) == cn):  # won
-            chance=chance-1;
+            chance=chance-1
             print("chance a "+str(chance))
             if (cn == 1):
          #       print('won')
@@ -151,7 +174,7 @@ def All_queries_handler(update, context):
 
                 requests.put(server + 'users/' + str(query.message.chat_id) + '.json',
                              json={'chat_id': query.message.chat_id, 'current_balance': current_balance,
-                                   'bet_size': bet_size,'chance': chance})
+                                   'bet_size': bet_size,'name':na,'phone_number':phone,'username':us,'last_time':last_t,'chance':chance,'time_joined':t})
            
                 query.edit_message_text(won_message(drawn_choice, bet_size, current_balance))
                 query.message.reply_text(text=main_menu_message(drawn_choice, bet_size, current_balance),
@@ -163,7 +186,7 @@ def All_queries_handler(update, context):
                 # requests.put(server + 'users/' + str(update.message.chat_id) + '/current_balance.json',current_balance)
                 requests.put(server + 'users/' + str(query.message.chat_id) + '.json',
                              json={'chat_id': query.message.chat_id, 'current_balance': current_balance,
-                                   'bet_size': bet_size,'chance': chance})
+                                   'bet_size': bet_size,'name':na,'phone_number':phone,'username':us,'last_time':last_t,'chance':chance,'time_joined':t})
 
                 query.edit_message_text(lost_message(drawn_choice, bet_size, current_balance))
                 query.message.reply_text(text=main_menu_message(drawn_choice, bet_size, current_balance),
@@ -174,7 +197,7 @@ def All_queries_handler(update, context):
         bet_size = int(query.data[7:len(query.data)])
         # requests.put(server + 'users/' + str(query.message.chat_id) + '/bet_size.json',int(query.data))
         requests.put(server + 'users/' + str(query.message.chat_id) + '.json',
-                     json={'chat_id': query.message.chat_id, 'current_balance': current_balance, 'bet_size': bet_size})
+                     json={'chat_id': query.message.chat_id, 'current_balance': current_balance, 'bet_size': bet_size,'name':na,'phone_number':phone,'username':us,'last_time':last_t,'chance':chance,'time_joined':t})
         query.edit_message_text('Bet size is changed to ' + query.data[7:len(query.data)] + ' coins.')
         query.message.reply_text(text=main_menu_message(drawn_choice, bet_size, current_balance),
                                  reply_markup=main_menu_keyboard())
@@ -258,15 +281,15 @@ def balance_low_keyboard():
 
 
 def won_message(drawn_choice, bet_size, current_balance):
-    return '*\n*\nCongratulations!! You have won ' + str(
+    return '✅\n✅\nCongratulations!! You have won ' + str(
         bet_size) + ' coins. Coin landed on ' + drawn_choice + '. Your balance is ' + str(
-        current_balance) + ' coins.\n*\n*'
+        current_balance) + ' coins.\n✅\n✅'
 
 
 def lost_message(drawn_choice, bet_size, current_balance):
-    return '*\n*\nOops... you have lost ' + str(
+    return '⛔️\n⛔️\nOops... you have lost ' + str(
         bet_size) + ' coins. Coin landed on ' + drawn_choice + '. Your balance is ' + str(
-        current_balance) + ' coins.\n*\n*'
+        current_balance) + ' coins.\n⛔️\n⛔️'
 
 
 def main_menu_message(drawn_choice, bet_size, current_balance):
