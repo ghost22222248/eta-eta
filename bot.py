@@ -275,7 +275,7 @@ def All_queries_handler(update, context):
             if (chat_id_h == str(query.message.chat_id)):  # is host
                 host_turn = int(str(requests.get(server + 'multi_player/' + r + '/host_turn.json').json()))
                 
-                if (current_balance_h >= bet_size and current_balance_j >= betsize):
+                if (current_balance_h >= bet_size and current_balance_j >= bet_size):
                     if (host_turn == 0):  # prediction
                         chosen = str(requests.get(server + 'multi_player/' + r + '/chosen.json').json())
                         if (chosen != 'None' and query.data == chosen):
@@ -322,7 +322,7 @@ def All_queries_handler(update, context):
             if (chat_id_j == str(query.message.chat_id)):  # is joined
                 host_turn = int(str(requests.get(server + 'multi_player/' + r + '/host_turn.json').json()))
                 
-                if (current_balance_j >= bet_size):
+                if (current_balance_j >= bet_size and current_balance_h>=bet_size):
                     if (host_turn == 1):  # prediction
                         chosen = str(requests.get(server + 'multi_player/' + r + '/chosen.json').json())
                         if (chosen != 'None' and query.data == chosen):
