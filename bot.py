@@ -325,7 +325,7 @@ def All_queries_handler(update, context):
                                            json={'current_balance': current_balance_j})
                             updater.bot.send_message(chat_id=chat_id_h, text=won_message_multi(bet_size))
                         requests.patch(server + 'multi_player/' + r + '.json', json={'host_turn': 0})
-                        updater.bot.send_message(chat_id=str(update.message.chat_id),
+                        updater.bot.send_message(chat_id=str(query.message.chat_id),
                                                  text=multiplayer_status_text(name_j, bet_size, current_balance_j))
                         query.message.reply_text('Make your choice and your opponent will try to guess it.',
                                                  reply_markup=heads_or_tails_multi_keyboard())
