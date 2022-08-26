@@ -1,4 +1,3 @@
-$ cat bot.py
 import os
 import asyncio
 
