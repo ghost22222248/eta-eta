@@ -101,10 +101,10 @@ def All_queries_handler(update, context):
     current_balance = int(
         str(requests.get(server + 'users/' + str(query.message.chat_id) + '/current_balance.json').json()))
     bet_size = int(str(requests.get(server + 'users/' + str(query.message.chat_id) + '/bet_size.json').json()))
-    chance = 10
+    chance = int(str(requests.get(server + 'users/' + str(query.message.chat_id) + '/chance.json').json()))
     last_t = 0
     t = 0
-    phone = 'x'
+    phone = str(requests.get(server + 'users/' + str(query.message.chat_id) + '/phone_number.json').json())
 
     na = ''
     us = ''
