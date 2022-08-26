@@ -269,12 +269,13 @@ def All_queries_handler(update, context):
             name_j = str(requests.get(server + 'multi_player/' + r + '/name_j.json').json())
             name_h = str(requests.get(server + 'multi_player/' + r + '/name_h.json').json())
             bet_size = int(str(requests.get(server + 'multi_player/' + r + '/bet_size.json').json()))
-
+            current_balance_h = int(str(requests.get(server + 'users/' + chat_id_h + '/current_balance.json').json()))
+            current_balance_j = int(
+                    str(requests.get(server + 'users/' + chat_id_j + '/current_balance.json').json()))
             if (chat_id_h == str(query.message.chat_id)):  # is host
                 host_turn = int(str(requests.get(server + 'multi_player/' + r + '/host_turn.json').json()))
-                current_balance_h = int(
-                    str(requests.get(server + 'users/' + chat_id_h + '/current_balance.json').json()))
-                if (current_balance_h >= bet_size):
+                
+                if (current_balance_h >= bet_size and current_balance_j >= betsize):
                     if (host_turn == 0):  # prediction
                         chosen = str(requests.get(server + 'multi_player/' + r + '/chosen.json').json())
                         if (chosen != 'None' and query.data == chosen):
@@ -282,16 +283,29 @@ def All_queries_handler(update, context):
                             current_balance_h = current_balance_h + bet_size
                             requests.patch(server + 'users/' + str(query.message.chat_id) + '.json',
                                            json={'current_balance': current_balance_h})
+                                           
+                            current_balance_j = current_balance_j - bet_size
+                            requests.patch(server + 'users/' + chat_id_j + '.json',
+                                           json={'current_balance': current_balance_j})              
+                                           
                             updater.bot.send_message(chat_id=chat_id_j, text=lost_message_multi(bet_size))
                         if (chosen != 'None' and query.data != chosen):
                             query.edit_message_text(lost_message_multi(bet_size))
                             current_balance_h = current_balance_h - bet_size
                             requests.patch(server + 'users/' + str(query.message.chat_id) + '.json',
                                            json={'current_balance': current_balance_h})
+                                           
+                             current_balance_j = current_balance_j+bet_size
+                            requests.patch(server + 'users/' + chat_id_j+ '.json',
+                                           json={'current_balance': current_balance_j})
+                                                        
                             updater.bot.send_message(chat_id=chat_id_j, text=won_message_multi(bet_size))
                         requests.patch(server + 'multi_player/' + r + '.json', json={'host_turn': 1})
                         updater.bot.send_message(chat_id=str(query.message.chat_id),
                                                  text=multiplayer_status_text(name_j, bet_size, current_balance_h))
+                        updater.bot.send_message(chat_id=chat_id_j,
+                                                 text=multiplayer_status_text(name_h, bet_size, current_balance_j))
+                                                 
                         query.message.reply_text('Make your choice and your opponent will try to guess it.',
                                                  reply_markup=heads_or_tails_multi_keyboard())
                         updater.bot.send_message(chat_id=chat_id_j,
@@ -307,8 +321,7 @@ def All_queries_handler(update, context):
                     query.edit_message_text('Not enough balance.')
             if (chat_id_j == str(query.message.chat_id)):  # is joined
                 host_turn = int(str(requests.get(server + 'multi_player/' + r + '/host_turn.json').json()))
-                current_balance_j = int(
-                    str(requests.get(server + 'users/' + chat_id_j + '/current_balance.json').json()))
+                
                 if (current_balance_j >= bet_size):
                     if (host_turn == 1):  # prediction
                         chosen = str(requests.get(server + 'multi_player/' + r + '/chosen.json').json())
@@ -317,16 +330,27 @@ def All_queries_handler(update, context):
                             current_balance_j = current_balance_j + bet_size
                             requests.patch(server + 'users/' + str(query.message.chat_id) + '.json',
                                            json={'current_balance': current_balance_j})
+                                           
+                             current_balance_h= current_balance_h - bet_size
+                            requests.patch(server + 'users/' + chat_id_h+ '.json',
+                                           json={'current_balance': current_balance_h})
                             updater.bot.send_message(chat_id=chat_id_h, text=lost_message_multi(bet_size))
                         if (chosen != 'None' and query.data != chosen):
                             query.edit_message_text(lost_message_multi(bet_size))
                             current_balance_j = current_balance_j - bet_size
                             requests.patch(server + 'users/' + str(query.message.chat_id) + '.json',
                                            json={'current_balance': current_balance_j})
+                            current_balance_h = current_balance_h+bet_size
+                            requests.patch(server + 'users/' + chat_id_h + '.json',
+                                           json={'current_balance': current_balance_h})
                             updater.bot.send_message(chat_id=chat_id_h, text=won_message_multi(bet_size))
                         requests.patch(server + 'multi_player/' + r + '.json', json={'host_turn': 0})
                         updater.bot.send_message(chat_id=str(query.message.chat_id),
-                                                 text=multiplayer_status_text(name_j, bet_size, current_balance_j))
+                                                 text=multiplayer_status_text(name_h, bet_size, current_balance_j))
+                                                 
+                         updater.bot.send_message(chat_id=chat_id_h,
+                                                 text=multiplayer_status_text(name_j, bet_size, current_balance_h))
+                                                                         
                         query.message.reply_text('Make your choice and your opponent will try to guess it.',
                                                  reply_markup=heads_or_tails_multi_keyboard())
                         updater.bot.send_message(chat_id=chat_id_h,
