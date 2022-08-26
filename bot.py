@@ -295,7 +295,7 @@ def All_queries_handler(update, context):
                             requests.patch(server + 'users/' + str(query.message.chat_id) + '.json',
                                            json={'current_balance': current_balance_h})
                                            
-                             current_balance_j = current_balance_j+bet_size
+                            current_balance_j = current_balance_j+bet_size
                             requests.patch(server + 'users/' + chat_id_j+ '.json',
                                            json={'current_balance': current_balance_j})
                                                         
@@ -331,7 +331,7 @@ def All_queries_handler(update, context):
                             requests.patch(server + 'users/' + str(query.message.chat_id) + '.json',
                                            json={'current_balance': current_balance_j})
                                            
-                             current_balance_h= current_balance_h - bet_size
+                            current_balance_h= current_balance_h - bet_size
                             requests.patch(server + 'users/' + chat_id_h+ '.json',
                                            json={'current_balance': current_balance_h})
                             updater.bot.send_message(chat_id=chat_id_h, text=lost_message_multi(bet_size))
@@ -348,7 +348,7 @@ def All_queries_handler(update, context):
                         updater.bot.send_message(chat_id=str(query.message.chat_id),
                                                  text=multiplayer_status_text(name_h, bet_size, current_balance_j))
                                                  
-                         updater.bot.send_message(chat_id=chat_id_h,
+                        updater.bot.send_message(chat_id=chat_id_h,
                                                  text=multiplayer_status_text(name_j, bet_size, current_balance_h))
                                                                          
                         query.message.reply_text('Make your choice and your opponent will try to guess it.',
