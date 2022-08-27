@@ -136,6 +136,8 @@ def All_queries_handler(update, context):
 
         #  query.message.reply_text(text=main_menu_message(drawn_choice,bet_size,current_balance),reply_markup=main_menu_keyboard())
         # print(query.data+'\n')
+    if(query.data =='help'):
+        query.edit_message_text(help_message(),reply_markup=backtomain_keyboard())    
     if (query.data == 'pwf'):
         query.edit_message_text('Host a game or join using code: ', reply_markup=host_or_join_keyboard())
     if (query.data == 'deposit'):  # deposit
@@ -275,7 +277,7 @@ def All_queries_handler(update, context):
             if (chat_id_h == str(query.message.chat_id)):  # is host
                 host_turn = int(str(requests.get(server + 'multi_player/' + r + '/host_turn.json').json()))
                 
-                if (current_balance_h >= bet_size and current_balance_j >= bet_size):
+                if (current_balance_h >= bet_size + 1000 ):
                     if (host_turn == 0):  # prediction
                         chosen = str(requests.get(server + 'multi_player/' + r + '/chosen.json').json())
                         if (chosen != 'None' and query.data == chosen):
@@ -318,11 +320,15 @@ def All_queries_handler(update, context):
                                                  text='Your opponent has made a choice. Can you guess what it is?',
                                                  reply_markup=heads_or_tails_multi_keyboard())
                 else:
-                    query.edit_message_text('Not enough balance.')
+                    query.edit_message_text('Not enough balance. Your balance should be above 1000 coins plus bet size. Click /start to go to main menu.')
+                    updater.bot.send_message(chat_id=chat_id_j,
+                                                 text='Your opponent does not have enough balance. Session ended. Click /start to go to main menu.',
+                                                 )
+                                                
             if (chat_id_j == str(query.message.chat_id)):  # is joined
                 host_turn = int(str(requests.get(server + 'multi_player/' + r + '/host_turn.json').json()))
                 
-                if (current_balance_j >= bet_size and current_balance_h>=bet_size):
+                if (current_balance_j >= bet_size +1000):
                     if (host_turn == 1):  # prediction
                         chosen = str(requests.get(server + 'multi_player/' + r + '/chosen.json').json())
                         if (chosen != 'None' and query.data == chosen):
@@ -364,7 +370,10 @@ def All_queries_handler(update, context):
                                                  reply_markup=heads_or_tails_multi_keyboard())
 
                 else:
-                    query.edit_message_text('Not enough balance')
+                    query.edit_message_text('Not enough balance. Your balance should be above 1000 coins plus bet size. Click /start to go to main menu.')
+                    updater.bot.send_message(chat_id=chat_id_h,
+                                                 text='Your opponent does not have enough balance. Session ended. Click /start to go to main menu.'
+                                                 )
          else:
            query.edit_message_text('Session has expired.')
         else:
@@ -503,6 +512,9 @@ def backtomain_keyboard():
     ]
     return InlineKeyboardMarkup(keyboard)
 
+def help_message():
+
+ return 'Welcome to Eta Eta\n\nHow to play against computer?\n\nEta Eta is a luck game. Choose either "head" or "tail". Then a coin will be tossed with 50/50 chance of landing on either "head" or "tail".\nIf the coin landed on your choice, you will win and the bet size you played with will be added to your account.\nIf the coin did not land on your choice, you will lose and the bet size you played with will be subtracted from your account.\n\nHow to play with friends?\n\nClick play with friends on the main menu.\nThen if you want to invite someone click on "invite a friend".\nIf you want to join an invitation, get the code from your inviter and send it to the bot. Then you will be automatically connected with your friend.\nYou can play for free by choosing bet size as "free" or you can play with real money by increasing bet size.\n\nThe game flow is turn by turn:\nOne person chooses either "head" or "tail", then the other person will try to guess what he chose.\n\n\nHow can I withdraw money from my account?\n\nContact @headsandtails24 \nWithdraw is available via CBE Birr, Tele Birr, CBE mobile banking and as mobile card.\n\nHow can I deposit money to my account?\n\nContact @headsandtails24 \nDeposit is available via CBE Birr, Tele Birr, CBE mobile banking and as mobile card.\n\nHow much can I earn in this game?\n\nUnlimited. As long as you win, you will recieve your money.\n\n\nወደ ኢታ ኤታ እንኳን በደህና መጡ\n\nከኮምፒዩተር ጋር እንዴት እንደሚጫወት?\n\nኤታ ኤታ የእድል ጨዋታ ነው። "head" ወይም "tail" ይምረጡ. ከዚያም አንድ ሳንቲም በ 50/50 በ "head" ወይም "tail" ላይ ለማረፍ እድሉ ይጣላል.\nሳንቲሙ በምርጫዎ ላይ ካረፈ ያሸንፋሉ እና የተጫወቱት የውርርድ መጠን ወደ መለያዎ ይታከላል።n\ሳንቲሙ በምርጫዎ ላይ ካልወረደ እርስዎ ይሸነፋሉ እና የተጫወቱት የውርርድ መጠን ከመለያዎ ይቀንሳል።\nከጓደኞች ጋር እንዴት መጫወት ይቻላል?\n\nበዋናው ምናሌ ውስጥ ከጓደኞች ጋር መጫወትን ጠቅ ያድርጉ።\nከዚያ ሰውን ለመጋበዝ ከፈለጉ "Invite a friend" ን ጠቅ ያድርጉ።\nግብዣን መቀላቀል ከፈለጉ ኮዱን ከግብዣዎ ያግኙ እና ወደ ቦት ይላኩ። ከዚያ በቀጥታ ከጓደኛዎ ጋር ይገናኛሉ.\nየውርርድ መጠንን እንደ "free" በመምረጥ በነጻ መጫወት ይችላሉ ወይም የውርርድ መጠን በመጨመር በእውነተኛ ገንዘብ መጫወት ይችላሉ።\n\nየጨዋታው ፍሰት በየተራ ነው፡-\nአንድ ሰው "head" ወይም "tail" ይመርጣል, ከዚያም ሌላኛው ሰው የመረጠውን ለመገመት ይሞክራል.\n\n\nከመለያዬ ገንዘብ ማውጣት የምችለው እንዴት ነው?\n\nያነጋግሩ @headsandtails24\nገንዘብ ማውጣት በኢትዮጵያ ብር፣ በቴሌ ብር፣ በኢትዮጵያ ንግድ ባንክ የሞባይል ባንክ እና በሞባይል ካርድ ይገኛል።\n\nገንዘብ ወደ አካውንቴ እንዴት ማስገባት እችላለሁ?\n\nያነጋግሩ @headsandtails24\nተቀማጭ ገንዘብ ሲቢኢ ብር፣ በቴሌ ብር፣ በኢትዮጵያ ንግድ ባንክ የሞባይል ባንክ እና በሞባይል ካርድ ይገኛል።\n\nበዚህ ጨዋታ ምን ያህል ማግኘት እችላለሁ?\n\nያልተገደበ. እስካሸነፍክ ድረስ ገንዘብህን ትቀበላለህ።'
 
 def main_menu_keyboard():
     keyboard = [
@@ -514,8 +526,13 @@ def main_menu_keyboard():
             InlineKeyboardButton('Deposit', callback_data='deposit'),
             InlineKeyboardButton('Withdraw', callback_data='withdraw')
         ],
-        [InlineKeyboardButton('Change bet size', callback_data='cbs')],
+        [
+            InlineKeyboardButton('Change bet size', callback_data='cbs'),
+            InlineKeyboardButton('How to play (Help)', callback_data='help')
+        
+        ],
         [InlineKeyboardButton('Play with friends', callback_data='pwf')],
+        
 
     ]
     return InlineKeyboardMarkup(keyboard)
