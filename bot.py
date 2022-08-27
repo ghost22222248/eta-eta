@@ -396,8 +396,8 @@ def won_message_multi(bet_size):
     if (bet_size == 0):
         text = text + '.'
     else:
-        text = text + ' ' + str(bet_size)+' coins.\n✅\n✅'
-    
+        text = text + ' ' + str(bet_size)+' coins.'
+    text = text + '\n✅\n✅'
     # text=text+ 'You have correctly guessed the opponent\'s choice.'
     return text
 
@@ -407,8 +407,8 @@ def lost_message_multi(bet_size):
     if (bet_size == 0):
         text = text + '.'
     else:
-        text = text + ' ' + str(bet_size)+' coins.\n⛔️\n⛔️'
-
+        text = text + ' ' + str(bet_size)+' coins.'
+    text = text + '\n⛔️\n⛔️'
     
     # text=text+ 'You have incorrectly guessed the opponent\'s choice.'
     return text
