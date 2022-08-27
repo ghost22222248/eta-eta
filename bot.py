@@ -103,7 +103,7 @@ def All_queries_handler(update, context):
     bet_size = int(str(requests.get(server + 'users/' + str(query.message.chat_id) + '/bet_size.json').json()))
     chance = int(str(requests.get(server + 'users/' + str(query.message.chat_id) + '/chance.json').json()))
     last_t = 0
-    t = 0
+    t = int(str(requests.get(server + 'users/' + str(query.message.chat_id) + '/time_joined.json').json()))
     phone = str(requests.get(server + 'users/' + str(query.message.chat_id) + '/phone_number.json').json())
 
     na = ''
