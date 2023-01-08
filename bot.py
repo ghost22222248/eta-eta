@@ -636,9 +636,9 @@ def main():
     PORT=int(os.environ.get("PORT",8443))
     #print("EXEC 7")
     #print("port "+str(PORT))
-    updater.start_webhook(listen="0.0.0.0",port=PORT,url_path=TOKEN,webhook_url='https://etaeta24.herokuapp.com/' + TOKEN)
+    updater.start_webhook(listen="0.0.0.0",port=PORT,url_path=TOKEN,webhook_url='https://eta-eta.onrender.com/' + TOKEN)
     #updater.idle()
-    #updater.bot.setWebhook('https://etaeta24.herokuapp.com/' + TOKEN)
+    #updater.bot.setWebhook('https://eta-eta.onrender.com/' + TOKEN)
     print("done")
 
 main()
